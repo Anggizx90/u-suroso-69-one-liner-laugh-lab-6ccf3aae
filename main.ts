@@ -33,14 +33,18 @@ const LINE =
 // The gate's own caps: UTF-8 text, 1 to 200 characters, not only whitespace,
 // exactly one line (no LF or CR anywhere, so no trailing newline either).
 function assertGate(line: string): void {
-  if (
-    line.length < 1 ||
-    line.length > 200 ||
-    line.trim().length === 0 ||
-    line.includes('\n') ||
-    line.includes('\r')
-  ) {
-    throw new Error(`entry line fails the gate: ${line.length} characters`);
+  const failures: string[] = [];
+  if (line.length < 1 || line.length > 200) {
+    failures.push(`length ${line.length} is outside 1-200 characters`);
+  }
+  if (line.trim().length === 0) {
+    failures.push('line is only whitespace');
+  }
+  if (line.includes('\n') || line.includes('\r')) {
+    failures.push('line contains a line break');
+  }
+  if (failures.length > 0) {
+    throw new Error(`entry line fails the gate: ${failures.join('; ')}`);
   }
 }
 
